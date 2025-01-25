@@ -1,0 +1,124 @@
+datasource db {
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model User {
+    id            String          @id @default(auto()) @map("_id") @db.ObjectId
+    name          String?
+    email         String?         @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    // Optional for WebAuthn support
+    Authenticator Authenticator[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    tickets  Tickets[] // o profissional pode ter varios tickets relacionado
+    customer Customer[] // profissional pode ter vários clientes relacionados a ele
+
+    @@map("users")
+}
+
+model Customer {
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    name       String
+    phone      String
+    email      String
+    address    String?
+    created_at DateTime? @default(now())
+    updated_at DateTime? @default(now())
+    tickets    Tickets[] // customer/client pode ter vários ticket aberto por ele
+
+    userId String? @db.ObjectId
+    user   User?   @relation(fields: [userId], references: [id])
+
+    @@map("customers")
+}
+
+// quando um ticket for aberto ele tem que ter o customer/client como dono
+model Tickets {
+    id          String    @id @default(auto()) @map("_id") @db.ObjectId
+    name        String
+    description String
+    status      String
+    created_at  DateTime? @default(now())
+    updated_at  DateTime? @default(now())
+
+    customerId String?   @db.ObjectId
+    customer   Customer? @relation(fields: [customerId], references: [id])
+
+    userId String? @db.ObjectId
+    user   User?   @relation(fields: [userId], references: [id])
+
+    @@map("tickets")
+}
+
+model Account {
+    id                String  @id @default(auto()) @map("_id") @db.ObjectId
+    userId            String  @db.ObjectId
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.String
+    access_token      String? @db.String
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.String
+    session_state     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@map("accounts")
+}
+
+model Session {
+    id           String   @id @default(auto()) @map("_id") @db.ObjectId
+    sessionToken String   @unique
+    userId       String   @db.ObjectId
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("sessions")
+}
+
+model VerificationToken {
+    identifier String   @id @default(auto()) @map("_id") @db.ObjectId
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+    @@map("verifications")
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+    credentialID         String  @id @map("_id")
+    userId               String  @db.ObjectId
+    providerAccountId    String
+    credentialPublicKey  String
+    counter              Int
+    credentialDeviceType String
+    credentialBackedUp   Boolean
+    transports           String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, credentialID])
+    @@map("authentications")
+}
