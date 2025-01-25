@@ -13,7 +13,11 @@ export default async function CustomerDashboard() {
         redirect("/");
     }
 
-    const response = await api.get("/api/customer");
+    const response = await api.get("/api/customer", {
+        params: {
+            userId: session.user.id,
+        },
+    });
     const customers = response.data;
 
     return (
