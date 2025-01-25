@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { InputComponent } from "../input";
+import { api } from "@/services/api";
 
 interface Props {
     name: string;
@@ -26,7 +27,7 @@ const schema = yup
     })
     .required();
 
-export const NewCustomerForm = () => {
+export const NewCustomerForm = ({ userId }: { userId: string }) => {
     const {
         register,
         handleSubmit,
@@ -35,8 +36,17 @@ export const NewCustomerForm = () => {
         resolver: yupResolver(schema),
     });
 
-    const onSubmit = ({ name, email, address, phone }: Props) =>
-        console.log({ name, email, address, phone });
+    const onSubmit = async ({ name, email, address, phone }: Props) => {
+        const response = await api.post("/api/customer", {
+            name,
+            email,
+            address,
+            phone,
+            userId,
+        });
+
+        console.log(response);
+    };
 
     return (
         <form className="flex flex-col mt-6" onSubmit={handleSubmit(onSubmit)}>
