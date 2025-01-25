@@ -5,9 +5,7 @@ import Link from "next/link";
 import { FiLoader, FiLock, FiLogOut, FiUser } from "react-icons/fi";
 
 export const HeaderComponent = () => {
-    const { status, data } = useSession();
-
-    console.log(data);
+    const { status } = useSession();
 
     async function handleLogin() {
         await signIn();

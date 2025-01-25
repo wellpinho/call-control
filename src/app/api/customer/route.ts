@@ -30,3 +30,15 @@ export async function POST(req: Request) {
         return error;
     }
 }
+
+export async function GET() {
+    const session = await auth();
+
+    const customers = await prisma.customer.findMany({
+        where: {
+            userId: session?.user.id,
+        },
+    });
+
+    return NextResponse.json(customers);
+}

@@ -1,6 +1,8 @@
 import { ContainerLayout } from "@/components/container";
 import { CardCustomerComponent } from "@/components/dashboard/card";
+import { ICustomer } from "@/interface";
 import { auth } from "@/lib/auth";
+import { api } from "@/services/api";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -10,6 +12,9 @@ export default async function CustomerDashboard() {
     if (!session) {
         redirect("/");
     }
+
+    const response = await api.get("/api/customer");
+    const customers = response.data;
 
     return (
         <ContainerLayout>
@@ -25,9 +30,12 @@ export default async function CustomerDashboard() {
                 </div>
 
                 <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
-                    <CardCustomerComponent />
-                    <CardCustomerComponent />
-                    <CardCustomerComponent />
+                    {customers.map((customer: ICustomer, index: number) => (
+                        <CardCustomerComponent
+                            customer={customer}
+                            key={index}
+                        />
+                    ))}
                 </section>
             </main>
         </ContainerLayout>
