@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { InputComponent } from "../input";
 import { api } from "@/services/api";
+import { useRouter } from "next/navigation";
 
 interface Props {
     name: string;
@@ -28,6 +29,8 @@ const schema = yup
     .required();
 
 export const NewCustomerForm = ({ userId }: { userId: string }) => {
+    const router = useRouter();
+
     const {
         register,
         handleSubmit,
@@ -37,7 +40,7 @@ export const NewCustomerForm = ({ userId }: { userId: string }) => {
     });
 
     const onSubmit = async ({ name, email, address, phone }: Props) => {
-        const response = await api.post("/api/customer", {
+        await api.post("/api/customer", {
             name,
             email,
             address,
@@ -45,7 +48,7 @@ export const NewCustomerForm = ({ userId }: { userId: string }) => {
             userId,
         });
 
-        console.log(response);
+        router.replace("/dashboard/customer");
     };
 
     return (
