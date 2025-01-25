@@ -15,7 +15,8 @@ export const CardCustomerComponent = ({
                 {customer.email}
             </p>
             <p>
-                <strong>Telefone: </strong>55{customer.phone}
+                <strong>Telefone: </strong>
+                {customer.phone}
             </p>
             <p>
                 <strong>Endereço: </strong>
