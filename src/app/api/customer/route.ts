@@ -70,7 +70,12 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("id") as string;
 
-    console.log("delete userID:", userId);
+    if (!userId) {
+        return NextResponse.json(
+            { error: "Failed delet customer" },
+            { status: 400 }
+        );
+    }
 
     try {
         await prisma.customer.delete({
