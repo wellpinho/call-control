@@ -1,6 +1,7 @@
 import { ContainerLayout } from "@/components/container";
 import { TableRowItem } from "@/components/dashboard/ticket";
 import { auth } from "@/lib/auth";
+import { api } from "@/services/api";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -9,6 +10,18 @@ export default async function Dashboard() {
 
     if (!session) {
         redirect("/");
+    }
+
+    const response = await api.get("/api/tickets", {
+        params: {
+            userId: session?.user.id,
+        },
+    });
+
+    const tickets = [];
+
+    if (response.status === 200) {
+        tickets.push(response.data);
     }
 
     return (
@@ -29,6 +42,9 @@ export default async function Dashboard() {
                             <th className="font-medium text-left uppercase pl-1">
                                 Cliente
                             </th>
+                            <th className="font-medium text-left uppercase pl-1">
+                                Tipo
+                            </th>
                             <th className="font-medium text-left uppercase hidden sm:block">
                                 Data Cadastro
                             </th>
@@ -39,8 +55,13 @@ export default async function Dashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        <TableRowItem />
-                        <TableRowItem />
+                        {tickets.map((ticket) => (
+                            <TableRowItem
+                                key={ticket.id}
+                                ticket={ticket}
+                                customer={ticket.customer}
+                            />
+                        ))}
                     </tbody>
                 </table>
             </main>

@@ -17,6 +17,10 @@ export async function GET(req: Request) {
         const tickets = await prisma.tickets.findFirst({
             where: {
                 userId,
+                status: "open",
+            },
+            include: {
+                customer: true,
             },
         });
 

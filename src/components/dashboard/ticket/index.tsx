@@ -1,14 +1,27 @@
+import { ICustomer, ITicket } from "@/interface";
+import moment from "moment";
 import { FiFile, FiTrash2 } from "react-icons/fi";
 
-export const TableRowItem = () => {
+interface Props {
+    ticket: ITicket;
+    customer: ICustomer;
+}
+
+export const TableRowItem = ({ customer, ticket }: Props) => {
+    const createdAt = moment(ticket.created_at).format("DD/MM/YYYY");
+
+    console.log("ticket: ", ticket);
+    console.log("customer: ", customer);
+
     return (
         <>
             <tr className="border-b-2 border-b-slate-200 h-16 last:border-b-0 bg-slate-100 hover:bg-gray-200 duration-300">
-                <td className="text-left pl-2">Mercado Silva</td>
-                <td className="text-left hidden sm:table-cell">25/01/2025</td>
+                <td className="text-left pl-2">{customer.name}</td>
+                <td className="text-left pl-2">{ticket.name}</td>
+                <td className="text-left hidden sm:table-cell">{createdAt}</td>
                 <td className="text-left">
                     <span className="bg-green-500 px-2 py-1 rounded uppercase text-white">
-                        aberto
+                        {ticket.status === "open" ? "Aberto" : "Fechado"}
                     </span>
                 </td>
                 <td className="text-left">

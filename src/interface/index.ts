@@ -12,5 +12,6 @@ export interface ITicket {
     description: string;
     customerId: string;
     userId: string;
-    status: ["open", "closed"];
+    status: string;
+    created_at?: Date;
 }
