@@ -41,6 +41,11 @@ export default async function CustomerDashboard() {
                         />
                     ))}
                 </section>
+                {!customers.length && (
+                    <h1 className="text-gray-600">
+                        Você ainda não possui nenhum cliente
+                    </h1>
+                )}
             </main>
         </ContainerLayout>
     );
