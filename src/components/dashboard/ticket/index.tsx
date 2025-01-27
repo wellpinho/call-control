@@ -1,6 +1,10 @@
+"use client";
+
 import { ICustomer, ITicket } from "@/interface";
+import { api } from "@/services/api";
 import moment from "moment";
 import { FiFile, FiTrash2 } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 interface Props {
     ticket: ITicket;
@@ -9,9 +13,21 @@ interface Props {
 
 export const TableRowItem = ({ customer, ticket }: Props) => {
     const createdAt = moment(ticket.created_at).format("DD/MM/YYYY");
+    const router = useRouter();
 
-    console.log("ticket: ", ticket);
-    console.log("customer: ", customer);
+    console.log(ticket);
+
+    async function handleChangeTicketStatus() {
+        try {
+            await api.patch("/api/tickets", {
+                id: ticket.id,
+            });
+
+            router.refresh();
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <>
@@ -25,7 +41,7 @@ export const TableRowItem = ({ customer, ticket }: Props) => {
                     </span>
                 </td>
                 <td className="text-left">
-                    <button className="mr-2">
+                    <button onClick={handleChangeTicketStatus} className="mr-3">
                         <FiTrash2 size={24} color="#ef4444" />
                     </button>
                     <button>

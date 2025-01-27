@@ -8,6 +8,7 @@ export interface ICustomer {
 }
 
 export interface ITicket {
+    id: string;
     name: string;
     description: string;
     customerId: string;

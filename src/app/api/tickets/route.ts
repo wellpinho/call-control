@@ -2,6 +2,10 @@ import { ITicket } from "@/interface";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+// function createIndexAndLifeTime() {
+//     db.Cache.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 3600 })
+// }
+
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId") as string;
@@ -14,7 +18,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const tickets = await prisma.tickets.findFirst({
+        const tickets = await prisma.tickets.findMany({
             where: {
                 userId,
                 status: "open",
@@ -64,5 +68,31 @@ export async function POST(req: Request) {
         );
     } catch (error) {
         return NextResponse.json({ message: error }, { status: 400 });
+    }
+}
+
+export async function PATCH(req: Request) {
+    const { id } = await req.json();
+
+    try {
+        await prisma.tickets.update({
+            where: {
+                id,
+            },
+            data: {
+                status: "closed",
+            },
+        });
+
+        return NextResponse.json(
+            { message: "Ticket status closed" },
+            { status: 201 }
+        );
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+            { error: "Failed delet customer" },
+            { status: 400 }
+        );
     }
 }

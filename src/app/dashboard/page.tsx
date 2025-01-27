@@ -21,7 +21,7 @@ export default async function Dashboard() {
     const tickets = [];
 
     if (response.status === 200) {
-        tickets.push(response.data);
+        tickets.push(...response.data);
     }
 
     return (
@@ -64,6 +64,12 @@ export default async function Dashboard() {
                         ))}
                     </tbody>
                 </table>
+
+                {!tickets.length && (
+                    <h1 className="px-2 text-gray-300 text-center bg-gray-700">
+                        Nenhum ticket aberto encontrado.
+                    </h1>
+                )}
             </main>
         </ContainerLayout>
     );
