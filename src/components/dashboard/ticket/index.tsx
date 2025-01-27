@@ -5,6 +5,8 @@ import { api } from "@/services/api";
 import moment from "moment";
 import { FiFile, FiTrash2 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { ModalContext } from "@/providers/modal";
 
 interface Props {
     ticket: ITicket;
@@ -14,8 +16,6 @@ interface Props {
 export const TableRowItem = ({ customer, ticket }: Props) => {
     const createdAt = moment(ticket.created_at).format("DD/MM/YYYY");
     const router = useRouter();
-
-    console.log(ticket);
 
     async function handleChangeTicketStatus() {
         try {
@@ -27,6 +27,17 @@ export const TableRowItem = ({ customer, ticket }: Props) => {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    const { handleModalVisible, setDetailTicketToModal } =
+        useContext(ModalContext);
+
+    function handleOpenModal() {
+        handleModalVisible();
+        setDetailTicketToModal({
+            customer,
+            ticket,
+        });
     }
 
     return (
@@ -44,7 +55,7 @@ export const TableRowItem = ({ customer, ticket }: Props) => {
                     <button onClick={handleChangeTicketStatus} className="mr-3">
                         <FiTrash2 size={24} color="#ef4444" />
                     </button>
-                    <button>
+                    <button onClick={handleOpenModal}>
                         <FiFile size={24} color="#3b82f6" />
                     </button>
                 </td>

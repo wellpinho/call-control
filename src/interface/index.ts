@@ -16,3 +16,15 @@ export interface ITicket {
     status: string;
     created_at?: Date;
 }
+
+export interface IModalContext {
+    visible: boolean;
+    ticket: ITicketInfo | undefined;
+    handleModalVisible: () => void;
+    setDetailTicketToModal: (detail: ITicketInfo) => void;
+}
+
+export interface ITicketInfo {
+    ticket: ITicket;
+    customer: ICustomer;
+}

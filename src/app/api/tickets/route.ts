@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     }
 
     const { name, description, customerId }: ITicket = await req.json();
-    console.log(name, description, userId, customerId);
+
     try {
         await prisma.tickets.create({
             data: {
