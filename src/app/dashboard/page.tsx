@@ -44,7 +44,6 @@ export default async function Dashboard() {
                     </tbody>
                 </table>
             </main>
-            <pre>{JSON.stringify(session, null, 2)}</pre>
         </ContainerLayout>
     );
 }
