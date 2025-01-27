@@ -6,3 +6,11 @@ export interface ICustomer {
     address?: string;
     userId: string;
 }
+
+export interface ITicket {
+    name: string;
+    description: string;
+    customerId: string;
+    userId: string;
+    status: ["open", "closed"];
+}

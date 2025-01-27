@@ -20,6 +20,42 @@ export default async function NewTicket() {
 
     const customers: ICustomer[] = response.data;
 
+    // esta função é feita e renderizada apenas no lado servidor
+    // caso precise suar uma função do lado servidor é preciso de um hook com a flag "use server"
+    async function handleCreateTicket(formData: FormData) {
+        "use server";
+
+        const name = formData.get("name");
+        const description = formData.get("description");
+        const customerId = formData.get("customerId");
+
+        if (!name || !description || !customerId) {
+            return;
+        }
+
+        const response = await api.post(
+            "/api/tickets",
+            {
+                name,
+                description,
+                customerId,
+            },
+            {
+                params: {
+                    userId: session?.user.id,
+                },
+            }
+        );
+
+        if (response.status === 400) {
+            console.log("Ooops, algo deu errado.");
+        }
+
+        if (response.status === 201) {
+            return redirect("/dashboard");
+        }
+    }
+
     return (
         <ContainerLayout>
             <main className="mt-9 mb-2">
@@ -36,7 +72,11 @@ export default async function NewTicket() {
                 </div>
 
                 {/* criando form aqui para testar tudo no server component */}
-                <form className="flex flex-col mt-6">
+                {/* vmaos usar server action aqui */}
+                <form
+                    className="flex flex-col mt-6"
+                    action={handleCreateTicket}
+                >
                     <div className="flex items-center gap-2">
                         <div className="flex-col w-[70%]">
                             <label
@@ -48,6 +88,7 @@ export default async function NewTicket() {
                             <input
                                 className="w-full border-2 rounded-md px-2 mb-2 h-11"
                                 type="text"
+                                name="name"
                                 placeholder="Digite nome do chamado"
                                 required
                             />
@@ -61,7 +102,10 @@ export default async function NewTicket() {
                                 >
                                     Selecione o cliente
                                 </label>
-                                <select className="w-full border-2 rounded-md px-2 mb-2 h-11 resize-none bg-white">
+                                <select
+                                    name="customerId"
+                                    className="w-full border-2 rounded-md px-2 mb-2 h-11 resize-none bg-white"
+                                >
                                     {customers.map((customer: ICustomer) => (
                                         <option
                                             key={customer.id}
@@ -79,6 +123,7 @@ export default async function NewTicket() {
                         Descreva o problema
                     </label>
                     <textarea
+                        name="description"
                         className="w-full border-2 rounded-md px-2 mb-2 h-24 resize-none"
                         placeholder="Descreva o problema"
                         required
