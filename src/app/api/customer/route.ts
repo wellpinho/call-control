@@ -43,7 +43,6 @@ export async function GET(req: Request) {
     }
 
     try {
-        console.log("url2:", userId);
         const customers = await prisma.customer.findMany({
             where: {
                 userId,
@@ -71,18 +70,21 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("id") as string;
 
-    console.log(userId);
+    console.log("delete userID:", userId);
 
     try {
-        await prisma.user.delete({
+        await prisma.customer.delete({
             where: {
                 id: userId,
             },
         });
 
-        return NextResponse.json({ message: "User removido" });
+        return NextResponse.json({ message: "User removed successfully" });
     } catch (error) {
         console.log(error);
-        return NextResponse.json(error);
+        return NextResponse.json(
+            { error: "Failed delet customer" },
+            { status: 400 }
+        );
     }
 }
