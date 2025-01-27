@@ -77,6 +77,16 @@ export async function DELETE(req: Request) {
         );
     }
 
+    const tickets = await prisma.tickets.findFirst({
+        where: {
+            id: userId,
+        },
+    });
+
+    if (tickets) {
+        return NextResponse.json(403);
+    }
+
     try {
         await prisma.customer.delete({
             where: {
