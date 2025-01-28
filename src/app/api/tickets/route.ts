@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ITicket } from "@/interface";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
@@ -17,11 +18,15 @@ export async function GET(req: Request) {
         );
     }
 
+    console.log(userId);
+
     try {
         const tickets = await prisma.tickets.findMany({
             where: {
-                userId,
                 status: "open",
+                customer: {
+                    userId,
+                },
             },
             include: {
                 customer: true,
@@ -93,6 +98,33 @@ export async function PATCH(req: Request) {
         );
     } catch (error) {
         console.log(error);
+        return NextResponse.json(
+            { error: "Failed delet customer" },
+            { status: 400 }
+        );
+    }
+}
+
+export async function DELETE(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const customerId = searchParams.get("customerId");
+
+    if (!customerId) {
+        return NextResponse.json(
+            { error: "CustomerId is required" },
+            { status: 400 }
+        );
+    }
+
+    try {
+        await prisma.tickets.deleteMany({
+            where: {
+                customerId,
+            },
+        });
+
+        return NextResponse.json({ message: "User removed successfully" });
+    } catch (error) {
         return NextResponse.json(
             { error: "Failed delet customer" },
             { status: 400 }

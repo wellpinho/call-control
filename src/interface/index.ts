@@ -28,3 +28,8 @@ export interface ITicketInfo {
     ticket: ITicket;
     customer: ICustomer;
 }
+
+export interface ISeller {
+    id: string;
+    name: string;
+}

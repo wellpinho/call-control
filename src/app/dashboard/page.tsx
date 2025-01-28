@@ -1,3 +1,4 @@
+import { ButtonRefresh } from "@/components/button-refresh";
 import { ContainerLayout } from "@/components/container";
 import { TableRowItem } from "@/components/dashboard/ticket";
 import { auth } from "@/lib/auth";
@@ -29,12 +30,15 @@ export default async function Dashboard() {
             <main className="mt-2 mb-2">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold">Chamados</h1>
-                    <Link
-                        href={"/dashboard/new"}
-                        className="bg-blue-500 px-4 py-1 rounded text-white"
-                    >
-                        Abrir chamado
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <ButtonRefresh />
+                        <Link
+                            href={"/dashboard/new"}
+                            className="bg-blue-500 px-4 py-1 rounded text-white"
+                        >
+                            Abrir chamado
+                        </Link>
+                    </div>
                 </div>
                 <table className="min-w-full my-2">
                     <thead>

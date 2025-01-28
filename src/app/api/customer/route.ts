@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
@@ -57,29 +58,37 @@ export async function GET(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-    const session = await auth();
-
-    if (!session) {
-        return NextResponse.json(
-            { message: "Unauthorized", code: 401 },
-            { status: 401 }
-        );
-    }
-
-    // http://localhost:3000/api/customer?id=123
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("id") as string;
+    const customerId = searchParams.get("customerId") as string;
+    const removeAll = searchParams.get("removeAll") as string;
 
-    if (!userId) {
+    if (!customerId) {
         return NextResponse.json(
-            { error: "Failed delet customer" },
+            { error: "CustomerId is required" },
             { status: 400 }
         );
     }
 
+    if (removeAll) {
+        try {
+            await prisma.customer.delete({
+                where: {
+                    id: customerId,
+                },
+            });
+
+            return NextResponse.json({ message: "User removed successfully" });
+        } catch (error) {
+            return NextResponse.json(
+                { error: "Failed delet customer" },
+                { status: 400 }
+            );
+        }
+    }
+
     const tickets = await prisma.tickets.findFirst({
         where: {
-            id: userId,
+            customerId,
         },
     });
 
@@ -90,13 +99,12 @@ export async function DELETE(req: Request) {
     try {
         await prisma.customer.delete({
             where: {
-                id: userId,
+                id: customerId,
             },
         });
 
         return NextResponse.json({ message: "User removed successfully" });
     } catch (error) {
-        console.log(error);
         return NextResponse.json(
             { error: "Failed delet customer" },
             { status: 400 }

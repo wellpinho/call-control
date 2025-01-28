@@ -13,40 +13,50 @@ export const CardCustomerComponent = ({
     const router = useRouter();
     const [openModal, setOpenModal] = useState(false);
 
-    async function handleVerifyHasTickets() {
-        try {
-            const hasTickets = await api.get("/api/tickets", {
-                params: {
-                    id: customer.id,
-                },
-            });
-
-            if (hasTickets) {
-                setOpenModal(!openModal);
-            } else {
-                handleDeleteCustomer();
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     async function handleDeleteCustomer() {
         try {
-            await api.delete("/api/customer", {
+            const responde = await api.delete("/api/customer", {
                 params: {
-                    id: customer.id,
+                    customerId: customer.id,
                 },
             });
 
+            if (responde.data === 403) {
+                setOpenModal(!openModal);
+            }
             router.refresh();
         } catch (error) {
-            console.log(error);
+            if (error) {
+                setOpenModal(!openModal);
+            }
         }
     }
 
     function handleModal() {
         setOpenModal(!openModal);
+    }
+
+    async function removeCustomerAndTickets() {
+        try {
+            await api.delete("/api/customer", {
+                params: {
+                    customerId: customer.id,
+                    removeAll: true,
+                },
+            });
+
+            await api.delete("/api/tickets", {
+                params: {
+                    customerId: customer.id,
+                },
+            });
+
+            setOpenModal(!openModal);
+
+            router.refresh();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -68,17 +78,18 @@ export const CardCustomerComponent = ({
                     {customer.address}
                 </p>
                 <button
-                    onClick={handleVerifyHasTickets}
+                    onClick={handleDeleteCustomer}
                     className="bg-red-500 px-4 rounded text-white mt-2 self-start"
                 >
                     Deletar
                 </button>
             </article>
 
-            {!openModal && (
+            {openModal && (
                 <div className="fixed inset-0 p-4 flex flex-wrap justify-center items-center w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] overflow-auto font-[sans-serif]">
                     <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 relative">
                         <svg
+                            onClick={handleModal}
                             xmlns="http://www.w3.org/2000/svg"
                             className="w-3.5 cursor-pointer shrink-0 fill-gray-400 hover:fill-red-500 float-right"
                             viewBox="0 0 320.591 320.591"
@@ -110,25 +121,32 @@ export const CardCustomerComponent = ({
                             </svg>
                             <h4 className="text-gray-800 text-base mt-4">
                                 <strong>
-                                    Este cliente possui chamados aberto! <br />
+                                    Este cliente possui chamados em aberto!{" "}
+                                    <br />
                                 </strong>
-                                Deseja remover este usuário assim mesmo?
+                                <span className="text-sm">
+                                    Se optar em remover perderá todos os
+                                    chamados em aberto deste cliente. <br />{" "}
+                                    <strong>
+                                        Deseja remover este usuário assim mesmo?
+                                    </strong>
+                                </span>
                             </h4>
 
-                            <div className="text-center space-x-4 mt-8">
+                            <div className="text-center space-x-1 mt-8">
                                 <button
                                     onClick={handleModal}
                                     type="button"
-                                    className="px-4 py-2 rounded-lg text-gray-800 text-sm bg-gray-200 hover:bg-gray-300 active:bg-gray-200"
+                                    className="px-4 font-bold py-2 rounded text-gray-800 text-sm bg-gray-200 hover:bg-gray-300 active:bg-gray-200"
                                 >
-                                    Cancel
+                                    Cancelar
                                 </button>
                                 <button
-                                    onClick={handleDeleteCustomer}
+                                    onClick={removeCustomerAndTickets}
                                     type="button"
-                                    className="px-4 py-2 rounded-lg text-white text-sm bg-red-600 hover:bg-red-700 active:bg-red-600"
+                                    className="px-4 font-bold py-2 rounded text-white text-sm bg-red-600 hover:bg-red-700 active:bg-red-600"
                                 >
-                                    Delete
+                                    Confirmar remoção
                                 </button>
                             </div>
                         </div>

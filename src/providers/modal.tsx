@@ -15,7 +15,6 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     }
 
     function setDetailTicketToModal(detail: ITicketInfo) {
-        console.log(detail);
         setTicket(detail);
     }
 
