@@ -26,6 +26,9 @@ export async function GET(req: Request) {
             include: {
                 customer: true,
             },
+            orderBy: {
+                created_at: "asc",
+            },
         });
 
         if (!tickets) {
