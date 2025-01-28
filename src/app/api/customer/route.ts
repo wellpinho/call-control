@@ -26,9 +26,15 @@ export async function POST(req: Request) {
             },
         });
 
-        return NextResponse.json({ message: "Cliente cadastrado com sucesso" });
+        return NextResponse.json(
+            { message: "Cliente cadastrado com sucesso" },
+            { status: 200 }
+        );
     } catch (error) {
-        return error;
+        return NextResponse.json(
+            { message: "Internal server error" },
+            { status: 500 }
+        );
     }
 }
 
@@ -52,8 +58,10 @@ export async function GET(req: Request) {
 
         return NextResponse.json(customers);
     } catch (error) {
-        console.log(error);
-        return NextResponse.json(error);
+        return NextResponse.json(
+            { message: "Internal server error" },
+            { status: 500 }
+        );
     }
 }
 
@@ -93,7 +101,7 @@ export async function DELETE(req: Request) {
     });
 
     if (tickets) {
-        return NextResponse.json(403);
+        return NextResponse.json({ message: "forbiden" }, { status: 403 });
     }
 
     try {
