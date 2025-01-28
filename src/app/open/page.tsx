@@ -48,8 +48,6 @@ export default function App() {
         setCustomer({ id: response.data[0].id, name: response.data[0].name });
     };
 
-    console.log(customer);
-
     function handleClearCustomer() {
         setCustomer(null);
         setValue("email", "");

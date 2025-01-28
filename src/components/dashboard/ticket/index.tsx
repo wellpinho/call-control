@@ -25,7 +25,7 @@ export const TableRowItem = ({ customer, ticket }: Props) => {
 
             router.refresh();
         } catch (error) {
-            console.log(error);
+            return error;
         }
     }
 

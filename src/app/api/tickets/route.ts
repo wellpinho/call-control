@@ -18,8 +18,6 @@ export async function GET(req: Request) {
         );
     }
 
-    console.log(userId);
-
     try {
         const tickets = await prisma.tickets.findMany({
             where: {
@@ -97,7 +95,6 @@ export async function PATCH(req: Request) {
             { status: 201 }
         );
     } catch (error) {
-        console.log(error);
         return NextResponse.json(
             { error: "Failed delet customer" },
             { status: 400 }

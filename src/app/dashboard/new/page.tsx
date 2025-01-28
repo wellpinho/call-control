@@ -47,10 +47,6 @@ export default async function NewTicket() {
             }
         );
 
-        if (response.status === 400) {
-            console.log("Ooops, algo deu errado.");
-        }
-
         if (response.status === 201) {
             return redirect("/dashboard");
         }

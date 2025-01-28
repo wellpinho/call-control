@@ -55,7 +55,7 @@ export const CardCustomerComponent = ({
 
             router.refresh();
         } catch (error) {
-            console.log(error);
+            return error;
         }
     }
 
